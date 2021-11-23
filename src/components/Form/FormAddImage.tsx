@@ -60,10 +60,18 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
   const queryClient = useQueryClient();
   const mutation = useMutation(
     async (image: NewImageData) => {
-      await api.post('/api/images', {
-        ...image,
-        url: imageUrl,
-      });
+      try {
+        await api.post('/api/images', {
+          ...image,
+          url: imageUrl,
+        });
+      } catch (err) {
+        toast({
+          status: 'error',
+          title: 'Falha ao cadastar a imagem',
+          description: 'Ocorreu um erro ao tenta cadastar a sua imagem',
+        });
+      }
     },
     {
       onSuccess: () => {

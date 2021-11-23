@@ -21,12 +21,19 @@ type Page = {
 
 export default function Home(): JSX.Element {
   async function loadImages({ pageParam = null }): Promise<Page> {
-    const { data: apiData } = await api.get('/api/images', {
-      params: {
-        after: pageParam,
-      },
-    });
-    return apiData;
+    try {
+      const { data: apiData } = await api.get('/api/images', {
+        params: {
+          after: pageParam,
+        },
+      });
+      return apiData;
+    } catch {
+      return {
+        after: null,
+        data: [],
+      };
+    }
   }
 
   const {
@@ -41,10 +48,11 @@ export default function Home(): JSX.Element {
   });
 
   const formattedData = useMemo(() => {
-    return data?.pages.flatMap(d => d.data.flat());
+    const formated = data?.pages.flatMap(d => d.data.flat());
+    return formated;
   }, [data]);
 
-  if (isLoading) {
+  if (isLoading && !isError) {
     return <Loading />;
   }
 
